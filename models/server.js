@@ -1,6 +1,7 @@
 require("colors");
 const express = require("express");
 const cors = require("cors");
+const morgan = require("morgan");
 const { dbConnection } = require("../database/config");
 
 class Server {
@@ -33,6 +34,9 @@ class Server {
 
         // Directorio Público
         this.app.use(express.static("public"));
+
+        // Morgan Middleware
+        this.app.use(morgan("dev"));
     }
 
     routes() {
