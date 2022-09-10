@@ -1,24 +1,15 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
 
-const {
-    esRoleValido,
-    existEmail,
-    existUserById,
-} = require("../helpers/db-validatos");
+const { esRoleValido, existEmail, existUserById } = require("../helpers/db-validatos");
 const { validarCampos } = require("../middlewares/validar-campos");
-const {
-    usuariosGet,
-    usuariosPut,
-    usuariosPost,
-    usuariosDelete,
-    usuariosPatch,
-} = require("../controllers/usuarios.controllers");
+const { validarJWT } = require("../middlewares/validar-jwt");
+const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch } = require("../controllers/usuarios.controllers");
+const { isAdminRole } = require("../middlewares/validar-roles");
 
 const router = Router();
 
 router.get("/", usuariosGet);
-
 router.put(
     "/:id",
     [
@@ -35,11 +26,8 @@ router.post(
     // Middlewares
     [
         check("nombre", "El nombre es obligatorio").notEmpty(),
-        check(
-            "password",
-            "La contraseña debe de tener más de 6 letras"
-        ).isLength({
-            min: 6,
+        check("password", "La contraseña debe de tener más de 2 letras").isLength({
+            min: 2,
         }),
         check("correo", "El correo no es válido").isEmail(),
         check("correo").custom(existEmail),
@@ -51,11 +39,7 @@ router.post(
 
 router.delete(
     "/:id",
-    [
-        check("id", "no es un ID válido").isMongoId(),
-        check("id").custom(existUserById),
-        validarCampos,
-    ],
+    [validarJWT, isAdminRole, check("id", "no es un ID válido").isMongoId(), check("id").custom(existUserById), validarCampos],
     usuariosDelete
 );
 
