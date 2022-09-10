@@ -42,11 +42,13 @@ class Server {
 
     listen() {
         this.app.listen(this.port, () => {
+            console.clear();
             console.log(
                 "Server Running on ".white +
                     "http://localhost:".rainbow +
                     `${this.port}`.rainbow +
-                    "\n"
+                    "\n" +
+                    "---------------------------------------"
             );
         });
     }
